@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type Store struct {
 	data map[string]string
@@ -19,6 +22,17 @@ func (s *Store) Delete(key string) {
 	delete(s.data, key)
 }
 
+// keys return every key currently in the store, sorted alphabetically
+func (s *Store) Keys() []string {
+	keys := make([]string, 0, len(s.data))
+	for k := range s.data {
+		keys = append(keys, k)
+	}
+	//sort the keys alphabetically
+	slices.Sort(keys)
+	return keys
+}
+
 func NewStore() *Store {
 	return &Store{
 		data: make(map[string]string),
@@ -35,4 +49,5 @@ func main() {
 	fmt.Printf("Val : %s, Exists: %t\n", val, exists)
 
 	fmt.Println("GoKV - Go Key Value project")
+
 }
