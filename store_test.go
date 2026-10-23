@@ -31,10 +31,10 @@ func TestKeys_EmptyStore(t *testing.T) {
 func TestSetGet_RoundTrip(t *testing.T) {
 	store := NewStore()
 	store.Set("hellow", "world")
-	if val, ok := store.Get("hello"); !ok || val != "world" {
-		t.Error("Get method fails")
+	if val, err := store.Get("hello"); err != nil || val != "world" {
+		t.Errorf("Get method fails")
 	}
-	if val, ok := store.Get("missing"); ok || val != "" {
+	if val, err := store.Get("missing"); err == nil || val != "" {
 		t.Errorf("Get method fails")
 	}
 }
@@ -62,7 +62,7 @@ func TestDelete(t *testing.T) {
 			if got := store.Len(); got != tc.wantLen {
 				t.Errorf("after Delete(%q): Len() = %d, want %d", tc.deleteKey, got, tc.wantLen)
 			}
-			if _, ok := store.Get(tc.deleteKey); ok {
+			if _, err := store.Get(tc.deleteKey); err == nil {
 				t.Errorf("after Delete(%q): key still present", tc.deleteKey)
 			}
 		})
