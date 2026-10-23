@@ -30,7 +30,7 @@ func TestKeys_EmptyStore(t *testing.T) {
 
 func TestSetGet_RoundTrip(t *testing.T) {
 	store := NewStore()
-	store.Set("hellow", "world")
+	store.Set("hello", "world")
 	if val, err := store.Get("hello"); err != nil || val != "world" {
 		t.Errorf("Get method fails")
 	}
