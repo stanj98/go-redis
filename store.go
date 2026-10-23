@@ -37,3 +37,7 @@ func NewStore() *Store {
 		data: make(map[string]string),
 	}
 }
+
+func (s *Store) Len() int {
+	return len(s.data)
+}

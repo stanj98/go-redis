@@ -59,7 +59,7 @@ func TestDelete(t *testing.T) {
 				store.Set(k, v)
 			}
 			store.Delete(tc.deleteKey)
-			if got := len(store.Keys()); got != tc.wantLen {
+			if got := store.Len(); got != tc.wantLen {
 				t.Errorf("after Delete(%q): Len() = %d, want %d", tc.deleteKey, got, tc.wantLen)
 			}
 			if _, ok := store.Get(tc.deleteKey); ok {
