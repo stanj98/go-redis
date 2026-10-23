@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -10,9 +11,14 @@ func main() {
 	s.Set("a", "42")
 	s.Set("b", "43")
 	s.Set("c", "44")
-	val, exists := s.Get("d")
-	fmt.Printf("Val : %s, Exists: %t\n", val, exists)
+	s.Delete("a")
 
-	fmt.Println("GoKV - Go Key Value project")
+	val, err := s.Get("a")
+	if err != nil {
+		if errors.Is(err, ErrDoesNotExist) {
+			fmt.Println(err)
+		}
+	}
+	fmt.Println(val)
 
 }

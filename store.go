@@ -1,16 +1,22 @@
 package main
 
 import (
+	"errors"
 	"slices"
 )
+
+var ErrDoesNotExist = errors.New("Key does not exist")
 
 type Store struct {
 	data map[string]string
 }
 
-func (s *Store) Get(key string) (string, bool) {
+func (s *Store) Get(key string) (string, error) {
 	value, ok := s.data[key]
-	return value, ok
+	if !ok {
+		return "", ErrDoesNotExist
+	}
+	return value, nil
 }
 
 func (s *Store) Set(key, value string) {
