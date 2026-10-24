@@ -2,16 +2,23 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 )
 
 var ErrDoesNotExist = errors.New("Key does not exist")
+var ErrEmptyKey = errors.New("Key is mandatory")
+var ErrStoreFull = errors.New("Store is full")
 
 type Store struct {
-	data map[string]string
+	data    map[string]string
+	maxSize int
 }
 
 func (s *Store) Get(key string) (string, error) {
+	if key == "" {
+		return "", ErrEmptyKey
+	}
 	value, ok := s.data[key]
 	if !ok {
 		return "", ErrDoesNotExist
@@ -19,8 +26,20 @@ func (s *Store) Get(key string) (string, error) {
 	return value, nil
 }
 
-func (s *Store) Set(key, value string) {
+func (s *Store) Set(key, value string) error {
+	if key == "" {
+		return ErrEmptyKey
+	}
+
+	_, exists := s.data[key]
+
+	//check capacity
+	if s.maxSize > 0 && s.Len() >= s.maxSize && !exists {
+		return fmt.Errorf("Set(%q): %w", key, ErrStoreFull)
+	}
+
 	s.data[key] = value
+	return nil
 }
 
 func (s *Store) Delete(key string) {
@@ -38,9 +57,10 @@ func (s *Store) Keys() []string {
 	return keys
 }
 
-func NewStore() *Store {
+func NewStore(maxSize int) *Store {
 	return &Store{
-		data: make(map[string]string),
+		data:    make(map[string]string),
+		maxSize: maxSize,
 	}
 }
 
