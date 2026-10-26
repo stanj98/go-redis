@@ -31,3 +31,5 @@ func TestTTLStore_ExpiredKeyEvicted(t *testing.T) {
 	s := NewTTLStore(50 * time.Millisecond)
 	_ = s.Set("k", "v")
 }
+
+//1:26:04

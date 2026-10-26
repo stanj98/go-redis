@@ -1,27 +1,34 @@
 package main
 
 import (
-	"errors"
+	"encoding/base64"
 	"fmt"
 )
 
 func main() {
 
 	s := NewStore(2)
-	_ = s.Set("a", "42")
-	_ = s.Set("b", "72")
 
-	if err := s.Set("c", "2"); err != nil {
+	encrypted, err := SetKeyWithEncryption(*s, "a", "hey you can see me")
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	fmt.Println(encrypted)
+	ttlStore := NewTTLStore()
 
-	val, err := s.Get("a")
+	encryptedTTLValue, err := SetKeyWithEncryption(*ttlStore, "a", "hey you can see me")
 	if err != nil {
-		if errors.Is(err, ErrDoesNotExist) {
-			fmt.Println(err)
-		}
+		fmt.Println(err)
+		return
 	}
-	fmt.Println(val)
+	fmt.Println(encryptedTTLValue)
+}
 
+func SetKeyWithEncryption(store Store, key, val string) (string, error) {
+	encoded := base64.StdEncoding.EncodeToString([]byte(val))
+	if err := store.Set(key, encoded); err != nil {
+		return "", err
+	}
+	return s.Get(key)
 }
