@@ -7,6 +7,7 @@ import (
 
 type TTLStore struct {
 	data map[string]ttlEntry
+	ttl  time.Duration
 }
 
 type ttlEntry struct {
@@ -14,20 +15,26 @@ type ttlEntry struct {
 	expiresAt time.Time
 }
 
-func NewTTLStore() *TTLStore {
+func NewTTLStore(ttl time.Duration) *TTLStore {
 	return &TTLStore{
 		data: make(map[string]ttlEntry),
+		ttl:  ttl,
 	}
 }
 
-func (t *TTLStore) Set(key string, value string, ttl time.Duration) error {
+func (t *TTLStore) Set(key string, value string) error {
 	if key == "" {
 		return ErrEmptyKey
+	}
+
+	t.data[key] = ttlEntry{
+		value:     value,
+		expiresAt: time.Now().Add(t.ttl),
 	}
 	return nil
 }
 
-func (t *TTLStore) GetWithTTL(key string) (string, error) {
+func (t *TTLStore) Get(key string) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
 	}

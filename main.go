@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"time"
 )
 
 func main() {
@@ -15,7 +16,7 @@ func main() {
 		return
 	}
 	fmt.Println(encrypted)
-	ttlStore := NewTTLStore()
+	ttlStore := NewTTLStore(time.Second)
 
 	encryptedTTLValue, err := SetKeyWithEncryption(*ttlStore, "a", "hey you can see me")
 	if err != nil {
@@ -30,5 +31,6 @@ func SetKeyWithEncryption(store Store, key, val string) (string, error) {
 	if err := store.Set(key, encoded); err != nil {
 		return "", err
 	}
-	return s.Get(key)
+	return store.Get(key)
+
 }
