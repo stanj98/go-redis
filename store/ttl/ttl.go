@@ -1,8 +1,10 @@
-package main
+package ttl
 
 import (
 	"fmt"
 	"time"
+
+	"github.com/stanj98/go-redis/store"
 )
 
 type TTLStore struct {
@@ -24,7 +26,7 @@ func NewTTLStore(ttl time.Duration) *TTLStore {
 
 func (t *TTLStore) Set(key string, value string) error {
 	if key == "" {
-		return ErrEmptyKey
+		return store.ErrEmptyKey
 	}
 
 	t.data[key] = ttlEntry{
@@ -36,7 +38,7 @@ func (t *TTLStore) Set(key string, value string) error {
 
 func (t *TTLStore) Get(key string) (string, error) {
 	if key == "" {
-		return "", ErrEmptyKey
+		return "", store.ErrEmptyKey
 	}
 	entry, ok := t.data[key]
 	if !ok || time.Now().After(entry.expiresAt) {
