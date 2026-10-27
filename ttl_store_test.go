@@ -30,6 +30,9 @@ func TestTTLStore_GetAfterExpiry(t *testing.T) {
 func TestTTLStore_ExpiredKeyEvicted(t *testing.T) {
 	s := NewTTLStore(50 * time.Millisecond)
 	_ = s.Set("k", "v")
+	time.Sleep(100 * time.Millisecond)
+	_, _ = s.Get("k")
+	if s.Len() != 0 {
+		t.Fatalf("expected key to be eviced, got len=%d", s.Len())
+	}
 }
-
-//1:26:04
