@@ -13,8 +13,9 @@ import (
 func main() {
 
 	s := kv.NewStore(2)
+	logger := NewLoggingMiddleware(s)
 
-	encrypted, err := SetKeyWithEncryption(s, "a", "hey you can see me")
+	encrypted, err := SetKeyWithEncryption(logger, "a", "hey you can see me")
 	if err != nil {
 		fmt.Println(err)
 		return
