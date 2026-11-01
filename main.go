@@ -3,32 +3,33 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"time"
 
 	"github.com/stanj98/go-redis/store"
 	"github.com/stanj98/go-redis/store/kv"
-	"github.com/stanj98/go-redis/store/ttl"
 )
 
 func main() {
 
-	s := kv.NewStore(2)
-	logger := NewLoggingMiddleware(s)
+	kvStore := kv.NewStore(20)
+	PopulateDefaults(kvStore)
 
-	encrypted, err := SetKeyWithEncryption(logger, "a", "hey you can see me")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(encrypted)
-	ttlStore := ttl.NewTTLStore(time.Second * 2)
+	newStore := kvStore.Clone()
+	fmt.Println(kvStore)
+	fmt.Println(newStore)
+}
 
-	encryptedTTLValue, err := SetKeyWithEncryption(ttlStore, "a", "hey you can see me")
-	if err != nil {
-		fmt.Println(err)
-		return
+func PopulateDefaults(s store.Storer) error {
+	defaults := map[string]string{
+		"env":     "development",
+		"version": "0.0.1",
+		"debug":   "true",
 	}
-	fmt.Println(encryptedTTLValue)
+	for k, v := range defaults {
+		if err := s.Set(k, v); err != nil {
+			return fmt.Errorf("PopulateDefaults: %w", err)
+		}
+	}
+	return nil
 }
 
 func SetKeyWithEncryption(store store.Storer, key, val string) (string, error) {

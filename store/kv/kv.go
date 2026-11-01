@@ -76,3 +76,10 @@ func (s *Store) SetKeyWithEncryption(key, val string) (string, error) {
 	}
 	return s.Get(key)
 }
+
+func (s *Store) Clone() *Store {
+	return &Store{
+		data:    s.data,
+		maxSize: s.maxSize,
+	}
+}

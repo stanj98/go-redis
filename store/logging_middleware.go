@@ -1,9 +1,10 @@
 package main
 
 import (
-	"go-redis/store"
 	"log"
 	"os"
+
+	"github.com/stanj98/go-redis/store"
 )
 
 type LoggingMiddleware struct {
