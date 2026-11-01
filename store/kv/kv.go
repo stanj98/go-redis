@@ -65,6 +65,17 @@ func NewStore(maxSize int) *Store {
 	}
 }
 
+func (s *Store) Clone() *Store {
+	cp := &Store{
+		data:    make(map[string]string, len(s.data)),
+		maxSize: s.maxSize,
+	}
+	for k, v := range s.data {
+		cp.data[k] = v
+	}
+	return cp
+}
+
 func (s *Store) Len() int {
 	return len(s.data)
 }

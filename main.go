@@ -14,6 +14,9 @@ func main() {
 	PopulateDefaults(kvStore)
 
 	newStore := kvStore.Clone()
+
+	newStore.Set("env", "production")
+
 	fmt.Println(kvStore)
 	fmt.Println(newStore)
 }
