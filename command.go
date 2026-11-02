@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"go-redis/store"
 )
@@ -27,4 +28,6 @@ func RestoreOnBoot(s store.Storer, cmds []Command) {
 	for _, c := range cmds {
 		go dispatch(s, c)
 	}
+
+	time.Sleep(time.Second * 2)
 }
