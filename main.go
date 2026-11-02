@@ -10,18 +10,24 @@ import (
 
 func main() {
 
-	kvStore := kv.NewStore(20)
-	PopulateDefaults(kvStore)
+	cmds := []Command{
+		{Op: "SET", Key: "env", Value: "production"},
+		{Op: "SET", Key: "version", Value: "0.0.1"},
+		{Op: "SET", Key: "debug", Value: "true"},
+		{Op: "SET", Key: "env"},
+		{Op: "SET", Key: "region", Value: "eu-west-1"},
+		{Op: "SET", Key: "version", Value: "version"},
+	}
 
-	newStore := kvStore.Clone()
+	s := kv.NewStore(0)
+	RestoreOnBoot(s, cmds)
 
-	newStore.Set("env", "production")
-
-	fmt.Println(kvStore)
-	fmt.Println(newStore)
+	fmt.Println("restored, store size: ", s.Len())
+	fmt.Println("keys: ", s.Keys())
 }
 
 func PopulateDefaults(s store.Storer) error {
+
 	defaults := map[string]string{
 		"env":     "development",
 		"version": "0.0.1",

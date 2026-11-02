@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"time"
 )
 
 var ErrDoesNotExist = errors.New("Key does not exist")
@@ -31,6 +32,8 @@ func (s *Store) Set(key, value string) error {
 	if key == "" {
 		return ErrEmptyKey
 	}
+
+	time.Sleep(time.Second)
 
 	_, exists := s.data[key]
 
