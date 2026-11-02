@@ -1,4 +1,4 @@
-# Learn Golang by Building a Redis Clone
+# Golang Redis Clone
 
 Redis-compatible database engine.
 
