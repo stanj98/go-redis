@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"time"
+	"sync"
 
 	"go-redis/store"
 )
@@ -25,9 +25,13 @@ func dispatch(s store.Storer, c Command) {
 }
 
 func RestoreOnBoot(s store.Storer, cmds []Command) {
+	var wg sync.WaitGroup
 	for _, c := range cmds {
-		go dispatch(s, c)
+		wg.Go(func() {
+			dispatch(s, c)
+		})
+		// go dispatch(s, c)
 	}
 
-	time.Sleep(time.Second * 2)
+	wg.Wait()
 }
