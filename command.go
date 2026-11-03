@@ -27,11 +27,9 @@ func dispatch(s store.Storer, c Command) {
 func RestoreOnBoot(s store.Storer, cmds []Command) {
 	var wg sync.WaitGroup
 	for _, c := range cmds {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			dispatch(s, c)
-		}()
+		})
 		// go dispatch(s, c)
 	}
 
