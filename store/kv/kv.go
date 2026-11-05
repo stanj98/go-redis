@@ -4,7 +4,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"go-redis/store"
 	"slices"
+	"strconv"
 	"time"
 )
 
@@ -96,4 +98,28 @@ func (s *Store) Clone() *Store {
 		data:    s.data,
 		maxSize: s.maxSize,
 	}
+}
+
+func (s *Store) Incr(key string) (int, error) {
+	if key == "" {
+		return 0, store.ErrEmptyKey
+	}
+
+	v, err := strconv.Atoi()
+	value := strconv.Itoa()
+
+	current := 0
+	if raw, ok := s.data[key]; ok {
+		v, err := strconv.Atoi(raw)
+		if err != nil {
+			return 0, fmt.Errorf("INCR %q: %w", key, err)
+		}
+		current = v
+	}
+	current++
+	time.Sleep(time.Microsecond)
+
+	s.data[key] = strconv.Itoa(current)
+
+	return current, nil
 }
