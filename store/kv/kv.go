@@ -16,7 +16,7 @@ var ErrEmptyKey = errors.New("Key is mandatory")
 var ErrStoreFull = errors.New("Store is full")
 
 type Store struct {
-	mu      sync.Mutex
+	mu      sync.RWMutex
 	data    map[string]string
 	maxSize int
 }
@@ -25,8 +25,9 @@ func (s *Store) Get(key string) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
 	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	time.Sleep(time.Millisecond)
 	value, ok := s.data[key]
 	if !ok {
 		return "", ErrDoesNotExist
@@ -63,8 +64,8 @@ func (s *Store) Delete(key string) {
 
 // keys return every key currently in the store, sorted alphabetically
 func (s *Store) Keys() []string {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	keys := make([]string, 0, len(s.data))
 	for k := range s.data {
 		keys = append(keys, k)
@@ -86,8 +87,8 @@ func (s *Store) Clone() *Store {
 		data:    make(map[string]string, len(s.data)),
 		maxSize: s.maxSize,
 	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	for k, v := range s.data {
 		cp.data[k] = v
 	}
@@ -95,8 +96,8 @@ func (s *Store) Clone() *Store {
 }
 
 func (s *Store) Len() int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	return len(s.data)
 }
 
