@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -21,19 +22,35 @@ func dispatch(s store.Storer, c Command) {
 	case "GET":
 		s.Get(c.Key)
 	case "INCR":
-		s.Incr(c.Key)
+		_, err := s.Incr(c.Key)
+		return err
+	default:
+		return fmt.Errorf("unknown op %q", c.Op)
 	}
 
 }
 
 func RestoreOnBoot(s store.Storer, cmds []Command) {
 	var wg sync.WaitGroup
+	errs := make(chan error, len(cmds))
+
 	for _, c := range cmds {
 		wg.Go(func() {
-			dispatch(s, c)
+			errs <- dispatch(s, c)
 		})
 		// go dispatch(s, c)
 	}
 
+	go func() {
+		wg.Wait()
+		close(errs)
+	}()
+
 	wg.Wait()
+
+	for err := range errs {
+		if err != nil {
+			fmt.Printf("Error : %v\n", err)
+		}
+	}
 }
